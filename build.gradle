@@ -1,0 +1,78 @@
+/*
+ * Copyright 2018-2022 Wooga GmbH
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+plugins {
+    id 'net.wooga.plugins' version '4.0.0'
+    id 'net.wooga.snyk' version '0.10.0'
+    id "net.wooga.snyk-gradle-plugin" version "0.4.0"
+    id "net.wooga.cve-dependency-resolution" version "0.4.0"
+}
+
+repositories  {
+    mavenCentral()
+}
+
+java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.targetCompatibility = JavaVersion.VERSION_1_8
+
+group 'net.wooga.gradle'
+description = 'Plugin for wooga unity package development.'
+
+pluginBundle {
+    website = 'https://wooga.github.io/atlas-upm-artifactory/'
+    vcsUrl = 'https://github.com/wooga/atlas-upm-artifactory'
+    tags = ['Unity3D', 'wooga', 'package', 'wdk']
+}
+gradlePlugin {
+    plugins {
+        upm {
+            id = 'net.wooga.upm-artifactory'
+            displayName = 'Wooga plugin for setting UPM deploys'
+            description = 'This plugin provides tasks to publish a UPM package into a UPM artifactory repository'
+            implementationClass = 'wooga.gradle.wdk.upm.UPMPlugin'
+        }
+    }
+}
+
+cveHandler {
+    configurations("compileClasspath", "runtimeClasspath", "testCompileClasspath", "testRuntimeClasspath", "integrationTestCompileClasspath", "integrationTestRuntimeClasspath")
+}
+
+dependencies {
+    implementation "net.wooga.gradle:dotnet-sonarqube:[0.4,0.5["
+    implementation "net.wooga.gradle:unity:[3.1,4["
+    implementation "commons-io:commons-io:2.11.0"
+    implementation 'com.wooga.gradle:gradle-commons:[1.6.1,2['
+    implementation 'org.ajoberstar.grgit:grgit-gradle:[4.1.1,5['
+    implementation 'org.ajoberstar.grgit:grgit-core:[4.1.1,5['
+
+    implementation "org.jfrog.buildinfo:build-info-extractor-gradle:4.28.2"
+
+    implementation 'net.wooga.gradle:version:[2,3['
+    implementation 'net.wooga.gradle:github:[3,4['
+    implementation 'net.wooga.gradle:github-release-notes:[2,3['
+
+    testImplementation "net.wooga.gradle:release:[3,4)"
+    testImplementation 'com.wooga.gradle:gradle-commons-test:[1,2)'
+    testImplementation('org.jfrog.artifactory.client:artifactory-java-client-services:[2,3)') {
+        exclude module: 'logback-classic'
+    }
+    testImplementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    testImplementation('com.wooga.spock.extensions:spock-github-extension:0.3.0') {
+        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    }
+}

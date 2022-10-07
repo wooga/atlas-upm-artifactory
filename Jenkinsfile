@@ -11,7 +11,7 @@ withCredentials([usernamePassword(credentialsId: 'github_integration',
                                     usernameVariable: 'ATLAS_ARTIFACTORY_INTEGRATION_USER',
                                     passwordVariable: 'ATLAS_ARTIFACTORY_INTEGRATION_PASSWORD'),
                  string(credentialsId: 'atlas_plugins_sonar_token', variable: 'sonar_token'),
-                 string(credentialsId: 'atlas_plugins_snyk_token', variable: 'SNYK_TOKEN')]) {
+                 string(credentialsId: 'snyk-wooga-frontend-integration-token', variable: 'SNYK_TOKEN')]) {
 
     def testEnvironment = [
             'macos': [

@@ -42,7 +42,7 @@ gradlePlugin {
         upm {
             id = 'net.wooga.upm-artifactory'
             displayName = 'Wooga plugin for setting UPM deploys'
-            description = 'This plugin provides tasks to publish a UPM package into a UPM artifactory repository'
+            description = 'plugin for publishing UPM packages to an UPM/NPM artifactory repository'
             implementationClass = 'wooga.gradle.wdk.upm.UPMPlugin'
         }
     }

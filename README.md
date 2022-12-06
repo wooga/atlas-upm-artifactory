@@ -44,6 +44,94 @@ Tested with Oracle JDK8
 | 4.9            | ![yes]      |
 | 4.10           | ![yes]      |
 
+
+Usage
+=============================
+
+`UPMArtifactoryPlugin` supports a diversity of configurations, on many upm projects. 
+Each upm project needs to declare at least their directory inside of a named block, as shown below. 
+Please note that you can only have a single repository that will be used on all declared projects. 
+```groovy
+upm {
+    repository = //String, name of upm repository previously configured in publishing plugin. Mandatory
+    username = //String, username of target private UPM repository.  Can be empty
+    password = //String, password of target private UPM repository. Can be empty
+    projectName {
+        packageDirectory = //Directory, base folder of desired UPM package, mandatory.
+        version = //String, version of the published package. Is not validated in any way. Defaults to `project.version`
+        generateMetaFiles = //boolean, set to true to force metafile generation. 
+    }
+    otherProjectName {
+        //...
+    }
+}
+``` 
+
+As UPM needs its packages to have Unity metafiles inside of them, the project tries to check if the package needs to regenerate its metafiles, 
+and if true, generates them. If somehow metafiles aren't still properly present in the final project, 
+the generation can be forced by setting the `upm.generateMetafiles` property to `true`. Please note that setting this 
+to `false` doesn't block automatic metafile generation.
+
+UPM repositories should be configured inside the `publishing` block, in a similar way to 
+paket repositories, as shown below. Those repositories can be then referenced by their name in the upm extension `repository` configuration.
+
+```groovy
+publishing {
+    repositories {
+        upm {
+            name "snapshot"
+            url "https://artifactory.repo/mynpmrepo/upm-snapshot"
+        }
+
+        upm {
+            name "rc"
+            url "https://artifactory.repo/mynpmrepo/upm-rc"
+        }
+
+        upm {
+            name "final"
+            url "https://artifactory.repo/mynpmrepo/upm-release"
+        }
+    }
+}
+```
+
+The `credentials` block is supported as well, so you can do as below. The credentials are set for that specific repository. 
+```groovy
+publishing {
+    repositories {
+        upm {
+            name "myrepo"
+            url "https://artifactory.repo/mynpmrepo/upm-myrepo"
+            credentials {
+                username = //String, repository username 
+                password =  //String, repository password
+            }
+        }
+   ...
+    }
+}
+```
+The UPM-related information in the `publishing` block is translated into the `upm` extension, so the 
+username and password for your selected repositories are available through the `upm.username` and `upm.password` properties. 
+Those properties can also be used to set the `username` & `password` for the repository specified in the `repository` property.
+
+You can also check repository-specific information for your selected repository using the `upm.selectedUPMRepository` provider.
+
+Packaging tasks (`GenerateUpmPackage`) are created for each project, named with the format `{projectName}UpmPack`. 
+Those tasks create a tarball from the given upm project directory. 
+Then this tarball is transformed into a gradle artifact named `{projectName}UpmArtifact`, 
+which is stored in a gradle configuration named `{projectName}Upm`. The artifact is also stored in a 
+Publishing plugin publication equally named `{projectName}Upm`, which is published to the specified repository. 
+
+The UPM publishing is connected to the Artifactory and Publishing plugins, so just running the `publish` task
+should be enough to publish a package, given that all mandatory requirements are set 
+(a UPM repository and a corresponding repository name configured into `upm.repository`).
+
+
+
+
+
 Development
 ===========
 [Code of Conduct](docs/Code-of-conduct.md)

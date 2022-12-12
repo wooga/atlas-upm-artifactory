@@ -1,15 +1,35 @@
 package wooga.gradle.upm.artifactory.traits
 
 import com.wooga.gradle.BaseSpec
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.options.Option
+import wooga.gradle.upm.artifactory.internal.MapPropertyWithRightDefault
+import wooga.gradle.upm.artifactory.internal.repository.UPMArtifactRepository
 
 trait UPMPublishSpec implements BaseSpec {
 
+    @Option(option = "repositories", description = """
+    Repositories [name: UPMArtifactRepository] that be used as publishing target by atlas-upm-artifactory
+    """)
+    private final MapProperty<String, UPMArtifactRepository> repositories = new MapPropertyWithRightDefault<>(objects, String, UPMArtifactRepository)
+
+    MapProperty<String, UPMArtifactRepository> getRepositories() {
+        return repositories
+    }
+
+    void setRepositories(Provider<Map<String, UPMArtifactRepository>> repositories) {
+        this.repositories.set(repositories)
+    }
+
+    void setRepositories(Map<String, UPMArtifactRepository> repositories) {
+        this.repositories.set(repositories)
+    }
+
     @Option(option = "repository", description = """
-    The repository where the UPM package will be published. Must match of the UPM repositories declared previously on the publishing extension.
+    The repository where the UPM package will be published. Must match of the UPM repositories declared on repositories or in the publishing extension.
     """)
     private final Property<String> repository = objects.property(String)
 

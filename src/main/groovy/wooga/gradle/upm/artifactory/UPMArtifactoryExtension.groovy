@@ -10,9 +10,8 @@ import wooga.gradle.upm.artifactory.internal.Extensions
 import wooga.gradle.upm.artifactory.internal.repository.UPMArtifactRepository
 import wooga.gradle.upm.artifactory.traits.UPMPublishSpec
 
-import java.util.stream.Collectors
-
 class UPMArtifactoryExtension implements UPMPublishSpec {
+
 
     final NamedDomainObjectContainer<UPMProjectDeclaration> projects
     protected Provider<UPMArtifactRepository> selectedUPMRepository
@@ -40,8 +39,12 @@ class UPMArtifactoryExtension implements UPMPublishSpec {
     static UPMArtifactoryExtension withPublishingConventions(Project project, PublishingExtension publishingExt, String name) {
         def extension = withStaticConventions(project, name)
         extension.with {
-            def upmRepositories = project.provider({ upmReposFromPublishing(publishingExt) })
-            it.selectedUPMRepository = upmRepositories.flatMap {
+            it.repositories.set(project.provider({
+                def repos = upmReposFromPublishing(publishingExt)
+                return repos.size() > 0 ? repos : null
+            }))
+
+            it.selectedUPMRepository = it.repositories.flatMap {
                 upmRepos -> extension.repository.map{ upmRepos[it]}
             }
             username.convention(UPMArtifactoryConventions.username.getStringValueProvider(project)
@@ -71,9 +74,9 @@ class UPMArtifactoryExtension implements UPMPublishSpec {
     }
 
     private static Map<String, UPMArtifactRepository> upmReposFromPublishing(PublishingExtension publishExt) {
-        return publishExt.repositories.withType(UPMArtifactRepository).stream().map {
-            repo -> new Tuple2<>(repo.name, repo)
-        }.collect(Collectors.toMap({ it.first as String }, { it.second as UPMArtifactRepository }))
+        return publishExt.repositories.withType(UPMArtifactRepository).collectEntries {
+            return [(it.name): it]
+        }
     }
 
     Provider<String> getUpmRepositoryBaseUrl() {

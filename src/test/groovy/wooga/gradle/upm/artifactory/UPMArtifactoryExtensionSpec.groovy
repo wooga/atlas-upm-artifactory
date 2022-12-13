@@ -4,7 +4,11 @@ import nebula.test.ProjectSpec
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.internal.provider.MissingValueException
+import org.gradle.api.internal.provider.ValueSupplier
+import org.gradle.api.provider.Provider
 import spock.lang.Unroll
+import wooga.gradle.upm.artifactory.internal.repository.UPMArtifactRepository
+import wooga.gradle.upm.artifactory.internal.repository.UPMRepository
 import wooga.gradle.upm.artifactory.tools.UPMFixtures
 import wooga.gradle.upm.artifactory.tools.GradleTestUtils
 
@@ -107,5 +111,40 @@ class UPMArtifactoryExtensionSpec extends ProjectSpec {
         then:
         def e = thrown(ProjectConfigurationException)
         e.cause instanceof MissingValueException
+    }
+
+    @Unroll
+    def "correct repository is set up"() {
+        given:
+        project.plugins.apply(UPMArtifactoryPlugin)
+        and:
+        def upmExt = utils.requireExtension(UPMArtifactoryExtension).with {
+            repository = selectedRepository
+            if (repositories != null) {
+                it.repositories = repositories.collectEntries { name, url ->
+                    return [(name): new UPMRepository().with { it.name(name); it.url(url); return it; }]
+                }
+            }
+            return it
+        }
+
+        when:
+        def entries = convention?.collectEntries { name, url ->
+            return [(name): new UPMRepository().with { it.name(name); it.url(url); return it; }]
+        }
+        upmExt.repositories.convention(project.provider{entries as Map<String, UPMRepository>})
+
+        then:
+        upmExt.repositories.orNull?.size() == repositories?.size()?: convention.size()
+        upmExt.upmRepositoryBaseUrl.isPresent()
+        upmExt.upmRepositoryKey.isPresent()
+
+        where:
+        repositories                                                   | convention                                                     | selectedRepository
+        ["repository": "https://myurl.com/repositories/repo"]          | null                                                           | "repository"
+        ["repo": "https://m.com/rs/r"]                                 | ["repo2": "https://m.com/rs/r2", "r3": "https://m.com/rs/r3"]  | "repo"
+        ["repo": "https://m.com/rs/r", "repo2": "https://m.com/rs/r2"] | null                                                           | "repo"
+        null                                                           | ["repo": "https://m.com/rs/r", "repo2": "https://m.com/rs/r2"] | "repo2"
+
     }
 }

@@ -53,8 +53,8 @@ cveHandler {
 }
 
 dependencies {
-    implementation "net.wooga.gradle:dotnet-sonarqube:[0.4,0.5["
-    implementation "net.wooga.gradle:unity:[3.1,4["
+    implementation "net.wooga.gradle:dotnet-sonarqube:[1,2["
+    implementation "net.wooga.gradle:unity:[4,5["
     implementation "commons-io:commons-io:2.11.0"
     implementation 'com.wooga.gradle:gradle-commons:[1.6.1,2['
     implementation 'org.ajoberstar.grgit:grgit-gradle:[4.1.1,5['
@@ -62,11 +62,11 @@ dependencies {
 
     implementation "org.jfrog.buildinfo:build-info-extractor-gradle:4.28.2"
 
-    implementation 'net.wooga.gradle:version:[2,3['
-    implementation 'net.wooga.gradle:github:[3,4['
-    implementation 'net.wooga.gradle:github-release-notes:[2,3['
+    implementation 'net.wooga.gradle:version:[3.0.0-rc.2,4['
+    implementation 'net.wooga.gradle:github:[4,5['
+    implementation 'net.wooga.gradle:github-release-notes:[3,4['
 
-    testImplementation "net.wooga.gradle:release:[3,4)"
+    testImplementation "net.wooga.gradle:release:[4,5)"
     testImplementation 'com.wooga.gradle:gradle-commons-test:[1,2)'
     testImplementation('org.jfrog.artifactory.client:artifactory-java-client-services:[2,3)') {
         exclude module: 'logback-classic'

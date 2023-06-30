@@ -60,7 +60,7 @@ dependencies {
     implementation 'org.ajoberstar.grgit:grgit-gradle:[4.1.1,5['
     implementation 'org.ajoberstar.grgit:grgit-core:[4.1.1,5['
 
-    implementation "org.jfrog.buildinfo:build-info-extractor-gradle:4.28.2"
+    implementation "org.jfrog.buildinfo:build-info-extractor-gradle:5.0.0"
 
     implementation 'net.wooga.gradle:version:[3.0.0-rc.2,4['
     implementation 'net.wooga.gradle:github:[4,5['

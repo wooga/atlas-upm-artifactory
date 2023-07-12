@@ -4,9 +4,12 @@ import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
+import wooga.gradle.unity.tasks.GenerateUpmPackage
 import wooga.gradle.upm.artifactory.internal.Extensions
 import wooga.gradle.upm.artifactory.internal.UPMProjectConfigurator
 import wooga.gradle.upm.artifactory.traits.UPMPackSpec
+
+import java.util.function.Consumer
 
 class UPMProjectDeclaration implements UPMPackSpec, Named {
 

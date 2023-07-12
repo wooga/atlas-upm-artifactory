@@ -1,5 +1,9 @@
 package wooga.gradle.upm.artifactory.internal
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
+import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.RandomStringUtils
 import org.apache.http.client.HttpResponseException
 import org.jfrog.artifactory.client.Artifactory
@@ -140,5 +144,27 @@ class UPMTestTools {
         return result
     }
 
+    static List<File> unTar(final File inputFile, final File outputDir){
 
+        def untaredFiles = []
+        def is = new TarArchiveInputStream(
+                new GzipCompressorInputStream(new FileInputStream(inputFile))) as TarArchiveInputStream
+        is.withCloseable {debInputStream ->
+            TarArchiveEntry entry = null;
+            while ((entry = debInputStream.getNextEntry() as TarArchiveEntry) != null) {
+                final File outputFile = new File(outputDir, entry.getName());
+                if (entry.isDirectory()) {
+                    if (!outputFile.exists()) {
+                        outputFile.mkdirs()
+                    }
+                } else {
+                    new FileOutputStream(outputFile).withCloseable {outputFileStream ->
+                        IOUtils.copy(debInputStream, outputFileStream)
+                    }
+                }
+                untaredFiles.add(outputFile);
+            }
+        }
+        return untaredFiles;
+    }
 }

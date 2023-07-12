@@ -54,8 +54,9 @@ cveHandler {
 
 dependencies {
     implementation "net.wooga.gradle:dotnet-sonarqube:[1,2["
-    implementation "net.wooga.gradle:unity:[4,5["
+    implementation "net.wooga.gradle:unity:[4.1.0,5["
     implementation "commons-io:commons-io:2.11.0"
+    implementation "org.apache.commons:commons-compress:1.22"
     implementation 'com.wooga.gradle:gradle-commons:[1.6.1,2['
     implementation 'org.ajoberstar.grgit:grgit-gradle:[4.1.1,5['
     implementation 'org.ajoberstar.grgit:grgit-core:[4.1.1,5['

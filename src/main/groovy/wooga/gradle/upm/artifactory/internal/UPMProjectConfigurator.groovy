@@ -66,6 +66,11 @@ class UPMProjectConfigurator {
             //we need to set this explicitly for projects on subplugins.
             it.destinationDirectory.convention(basePluginConvention.flatMap { it.distsDirectory })
             it.dependsOn(generateMetafiles)
+            upmProject.packageCustomizers.get().each { patcher ->
+                Closure cls = patcher.&accept
+                cls.setDelegate(it)
+                cls.call(it)
+            }
         }
         return upmPack
     }

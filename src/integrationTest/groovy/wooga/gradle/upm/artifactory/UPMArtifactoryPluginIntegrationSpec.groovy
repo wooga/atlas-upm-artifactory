@@ -1,5 +1,6 @@
 package wooga.gradle.upm.artifactory
 
+import groovy.json.JsonSlurper
 import org.gradle.api.file.Directory
 import org.gradle.api.publish.plugins.PublishingPlugin
 import spock.lang.Unroll
@@ -299,5 +300,40 @@ class UPMArtifactoryPluginIntegrationSpec extends UPMIntegrationSpec {
         location << ["extension", "repository"]
         packageDirectory = "Assets/upm"
         packageName = "packageName"
+    }
+
+    def "applies package.json patches before bundling the package"() {
+        given: "existing UPM-ready folder"
+        def packageDir = utils.writeTestPackage(projectDir, "dir", "pkgname")
+        buildFile << """
+        ${applyPlugin(UPMArtifactoryPlugin)}
+        publishing {
+            repositories {
+                upm {
+                    url = ${wrap(artifactoryURL(WOOGA_ARTIFACTORY_CI_REPO), String)}
+                    name = "integration"
+                }
+            }
+        }
+        upm {
+            repository = "integration"
+            projects {
+                defaultPackage {
+                    packageDirectory = ${wrap(packageDir.absolutePath, Directory)}
+                    customizePackage { p ->
+                        p.patch("test", "value")
+                    }
+                }
+            }
+            
+        }
+        """
+        when:
+        def r = runTasksSuccessfully("defaultPackageUpmPack")
+        then:
+        def upmPackage = new File(projectDir, "build/distributions/${UPMTestTools.prefix}pkgname-unspecified.tgz")
+        def pkgJson = UPMTestTools.unTar(upmPackage, new File(projectDir, "unpack")).find {it.name == "package.json"}
+        def contents = new JsonSlurper().parse(pkgJson)
+        contents["test"] == "value"
     }
 }

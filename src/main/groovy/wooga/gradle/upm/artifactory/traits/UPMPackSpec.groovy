@@ -3,10 +3,15 @@ package wooga.gradle.upm.artifactory.traits
 import com.wooga.gradle.BaseSpec
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
+import wooga.gradle.unity.traits.GenerateUpmPackageSpec
+
+import java.util.function.Consumer
 
 trait UPMPackSpec extends BaseSpec {
 
@@ -64,4 +69,23 @@ trait UPMPackSpec extends BaseSpec {
         generateMetaFiles.set(value)
     }
 
+    private final ListProperty<Consumer<GenerateUpmPackageSpec>> packageCustomizers = objects.listProperty(Consumer<GenerateUpmPackageSpec>)
+
+    @Input
+    @Optional
+    ListProperty<Consumer<GenerateUpmPackageSpec>> getPackageCustomizers() {
+        return packageCustomizers
+    }
+
+    void setPackageCustomizers(Provider<? extends Iterable<Consumer<GenerateUpmPackageSpec>>> patchers) {
+        packageCustomizers.set(patchers)
+    }
+
+    void setPackageCustomizers(Iterable<Consumer<GenerateUpmPackageSpec>> patchers) {
+        packageCustomizers.set(patchers)
+    }
+
+    void customizePackage(Consumer<GenerateUpmPackageSpec> patcher) {
+        this.packageCustomizers.add(patcher)
+    }
 }

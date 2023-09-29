@@ -2,6 +2,9 @@ package wooga.gradle.upm.artifactory
 
 import com.wooga.gradle.PropertyLookup
 import com.wooga.gradle.PropertyUtils
+import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
 import wooga.gradle.upm.artifactory.internal.DynamicPropertyLookup
 
 class UPMArtifactoryConventions {
@@ -48,4 +51,10 @@ class UPMArtifactoryConventions {
                            "upm.generate.metafiles"] },
             { false }
     )
+
+    static final Provider<Directory> resolvePackageDirectory(Project project, String name) {
+        packageDirectory.resolve(name)
+                .getDirectoryValueProvider(project, null, project.providers.provider{project.layout.projectDirectory})
+    }
+
 }

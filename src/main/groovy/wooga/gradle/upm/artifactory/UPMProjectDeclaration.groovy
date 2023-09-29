@@ -28,7 +28,10 @@ class UPMProjectDeclaration implements UPMPackSpec, Named {
 
     static final Provider<Directory> resolvePackageDirectory(Project project, String name) {
         UPMArtifactoryConventions.packageDirectory.resolve(name)
-                .getDirectoryValueProvider(project, null, project.providers.provider{project.layout.projectDirectory})
+                .getDirectoryValueProvider(project, null,
+                        project.providers.provider({
+                            project.layout.projectDirectory
+                        }))
     }
 
     UPMProjectDeclaration() {}

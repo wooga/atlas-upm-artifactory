@@ -2,9 +2,6 @@ package wooga.gradle.upm.artifactory
 
 import com.wooga.gradle.PropertyLookup
 import com.wooga.gradle.PropertyUtils
-import org.gradle.api.Project
-import org.gradle.api.file.Directory
-import org.gradle.api.provider.Provider
 import wooga.gradle.upm.artifactory.internal.DynamicPropertyLookup
 
 class UPMArtifactoryConventions {

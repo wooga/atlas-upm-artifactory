@@ -51,10 +51,4 @@ class UPMArtifactoryConventions {
                            "upm.generate.metafiles"] },
             { false }
     )
-
-    static final Provider<Directory> resolvePackageDirectory(Project project, String name) {
-        packageDirectory.resolve(name)
-                .getDirectoryValueProvider(project, null, project.providers.provider{project.layout.projectDirectory})
-    }
-
 }

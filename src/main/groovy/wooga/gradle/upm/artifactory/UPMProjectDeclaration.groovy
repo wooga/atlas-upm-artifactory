@@ -4,13 +4,9 @@ import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
-import wooga.gradle.unity.UnityPluginExtension
-import wooga.gradle.unity.tasks.GenerateUpmPackage
 import wooga.gradle.upm.artifactory.internal.Extensions
 import wooga.gradle.upm.artifactory.internal.UPMProjectConfigurator
 import wooga.gradle.upm.artifactory.traits.UPMPackSpec
-
-import java.util.function.Consumer
 
 class UPMProjectDeclaration implements UPMPackSpec, Named {
 
@@ -24,10 +20,15 @@ class UPMProjectDeclaration implements UPMPackSpec, Named {
         Extensions.setPropertiesOwner(UPMProjectDeclaration, extension, name)
         extension.with {
             version.convention(UPMArtifactoryConventions.version.resolve(name).getStringValueProvider(project).orElse(project.provider { project.version.toString() }))
-            packageDirectory.convention(UPMArtifactoryConventions.resolvePackageDirectory(project, name))
+            packageDirectory.convention(resolvePackageDirectory(project, name))
             generateMetaFiles.convention(UPMArtifactoryConventions.generateMetaFiles.resolve(name).getBooleanValueProvider(project))
         }
         return extension
+    }
+
+    static final Provider<Directory> resolvePackageDirectory(Project project, String name) {
+        UPMArtifactoryConventions.packageDirectory.resolve(name)
+                .getDirectoryValueProvider(project, null, project.providers.provider{project.layout.projectDirectory})
     }
 
     UPMProjectDeclaration() {}

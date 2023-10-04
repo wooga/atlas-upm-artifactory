@@ -72,7 +72,7 @@ dependencies {
     testImplementation('org.jfrog.artifactory.client:artifactory-java-client-services:[2,3)') {
         exclude module: 'logback-classic'
     }
-    testImplementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    testImplementation 'org.apache.httpcomponents:httpclient:4.5.14'
     testImplementation('com.wooga.spock.extensions:spock-github-extension:0.3.0') {
         exclude group: "org.codehaus.groovy", module: "groovy-all"
     }
